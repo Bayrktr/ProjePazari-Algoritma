@@ -1,0 +1,1 @@
+# ProjePazari-Algoritma
