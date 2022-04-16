@@ -1,4 +1,4 @@
-import mysql.connector
+import mysql.connector, random
 
 name = "arda"
 
@@ -36,14 +36,34 @@ def foodDatas(x):
     def takePriceFood():
         sql = f"SELECT price FROM foodrecords WHERE name = '{x}'"
         cursor.execute(sql)
-        return cursor.fetchone()[0]
+        a = cursor.fetchone()
+
+        if len(a) == 0:
+            pass
+        else:
+            return a[0]
 
     def takeNumberFood():
         sql = f"SELECT number FROM foodrecords WHERE name = '{x}'"
         cursor.execute(sql)
-        return cursor.fetchone()[0]
+        a = cursor.fetchone()
+
+        if len(a) == 0:
+            pass
+        else:
+            return a[0]
 
     return takePriceFood(), takeNumberFood()
+
+
+def allFoods(db=openMysql()):
+    liste = []
+    cursor = db.cursor()
+    sql = "SELECT name FROM foodrecords"
+    cursor.execute(sql)
+    for x in cursor.fetchall():
+        liste.append(x[0])
+    return liste
 
 
 def takeNames():
@@ -108,6 +128,47 @@ def collectionOfNumbers():
     return collection()
 
 
-for x, y in zip(takeNames(), collectionOfNumbers()):
+def listeArrangement():
+    names = takeNames()
+    numbers = collectionOfNumbers()
+    numbersTwo = numbers.copy()
+    newNames = []
+    newNumbers = []
+    for x in range(len(names)):
+        bigNumber = max(numbers)
+        index = numbersTwo.index(bigNumber)
+        newNames.append(names[index])
+        newNumbers.append(bigNumber)
+        numbers.remove(bigNumber)
+    return newNames, newNumbers
+
+
+requests = {
+    "border": -1,
+    "cantsell": [],
+    "discount": True,
+    "discountStart": 0,
+    "discountFinish": 10
+}
+
+newLists = listeArrangement()
+
+if requests["discount"]:
+    newLists[1][0] -= newLists[1][0] / (random.randint(requests["discountStart"], requests["discountFinish"]) * 100)
+    check = str(newLists[1][0]).split(".")
+    if len(check) != 1:
+        newLists[1][0] = check[0]
+
+for x, y in zip(newLists[0], newLists[1]):
     a = foodDatas(x)
-    print(f"{x} den su kadar alınmıs {y} fiyati {a[0]} elde su kadar var {a[1]}")
+    # print(f"{x} den su kadar alınmıs {y} fiyati {a[0]} elde su kadar var {a[1]}")
+    if x in allFoods():
+        if a[1] > requests["border"]:
+            if x not in requests["cantsell"]:
+                print(x, y, end=" ")
+            else:
+                pass
+        else:
+            pass
+    else:
+        pass
