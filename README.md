@@ -10,3 +10,8 @@ Oncelik Sirasi:
 -Ayrıyeten bazı testler yapılması gerekiyordu bunun için bazı programlar yazdım onlar sayesinde her seferinde farklı durumların olduğu simulasyonlar yaratabildim.Aynı zamanda zaman tasarrufu sağlıyorlar.
 -Güncelleme(16.04.2022)
 En sevilen ürününe indirim uygulamayı unutmuşum onu ekledim indirim uygulandıktan sonra olusan float değerini eğer oluştuysa int a çevirme ekledim kısaca ondalıklı sayıdan kurtuldum bu kadar .d 
+-Guncelleme(20.04.2022) 
+En sevilen kategorilerin belirlenmesini sağladım bu kategorilerin kamu üzerinde sevilenden sevilmeyen olucak şekilde sıralamasını sağladım
+Sonrasında her kategori ekrana basildiktan sonra bu kategoriye ait ürünler sevilenden sevilmeyene olucak şekilde sıralandı.
+Bazı istisnaları test etmem lazım boş kategoriler kategorisiz(None) ürünler gibi bu gibi durumlar gerçekleştiğinde programda error veriyor error ayıklama ile alakalı birşey eklenebilir .
+
