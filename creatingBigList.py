@@ -148,13 +148,13 @@ requests = {
     "cantsell": [],
     "discount": True,
     "discountStart": 0,
-    "discountFinish": 10
+    "discountFinish": 70
 }
 
 newLists = listeArrangement()
 
 if requests["discount"]:
-    newLists[1][0] -= newLists[1][0] / (random.randint(requests["discountStart"], requests["discountFinish"]) * 100)
+    newLists[1][0] -= newLists[1][0] * ((random.randint(requests["discountStart"], requests["discountFinish"])) / 100)
     check = str(newLists[1][0]).split(".")
     if len(check) != 1:
         newLists[1][0] = check[0]
