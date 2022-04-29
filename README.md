@@ -14,4 +14,7 @@ En sevilen ürününe indirim uygulamayı unutmuşum onu ekledim indirim uygulan
 En sevilen kategorilerin belirlenmesini sağladım bu kategorilerin kamu üzerinde sevilenden sevilmeyen olucak şekilde sıralamasını sağladım
 Sonrasında her kategori ekrana basildiktan sonra bu kategoriye ait ürünler sevilenden sevilmeyene olucak şekilde sıralandı.
 Bazı istisnaları test etmem lazım boş kategoriler kategorisiz(None) ürünler gibi bu gibi durumlar gerçekleştiğinde programda error veriyor error ayıklama ile alakalı birşey eklenebilir .
+-Güncelleme(29.04.2022)
+Menülerin kişiselleştirilmesi üzerinde duruyorum sistem üzerinden font,title;tek satırdaki eleman sayısı,tek satırdaki elemanların aralık boyutları,alt satırdaki eleman ile mesafe gibi özellikler ayarlanıcak.Bu boyutların menü üzerinde kapladığı yere göre ek sayfa açılacak sayfalar ihtiyaç kadar algoritma tarafından açılacak.
+Ek Not: Bir fikir önerisi aldım,kişiye önerilecek yemekler besin değerleri ve kişinin sağlık durumuna göre ayarlanıcak beta sürümünü hazırladıktan uğraşıcam.
 
