@@ -3,34 +3,57 @@ from PyQt5.QtCore import QRect, QPropertyAnimation
 from PyQt5.QtGui import QFont, QIcon, QPixmap
 from PyQt5.QtWidgets import QWidget, QApplication, QLineEdit, QPushButton, QMainWindow, QLabel, QComboBox
 
-name = "sude"
+name = "arda"
 
-backgroundOptions = {
-    "height": 800,
-    "widght": 600,
-    "fontColor": "white",
-    "titleColor": "black",
-    "categoryBetween": 3,
-    "fontSize": 8,
-    "titleSize": 10,
-    "fontBetweenSize": 25,
-    "titleBetweenSizeX": 120,
-    "titleBetweenSizeY": 150,
-    "PriceColor": "gray",
-    "unitName": "TL"
-}
+
+def openMysql():
+    return mysql.connector.connect(host="127.0.0.1", user="root", password="", database="test")
+
+
+def allMenuDatas():
+    liste = []
+    db = openMysql()
+    cursor = db.cursor()
+    sql = "SELECT * FROM menuoptions WHERE flag = '1'"
+    cursor.execute(sql)
+    for x in cursor.fetchall():
+        liste.append(x)
+    db.close()
+    return liste
+
+
+data = allMenuDatas()
+if len(data) == 0:
+    print("Seçili menü yok")
+else:
+    data = data[0]
+    data = list(data)
+    print(data)
+    backgroundOptions = {
+        "height": int(data[1]),
+        "widght": int(data[2]),
+        "fontColor": str(data[3]),
+        "titleColor": str(data[4]),
+        "fontType": str(data[5]),
+        "categoryBetween": int(data[8]),
+        "fontSize": int(data[6]),
+        "titleSize": int(data[7]),
+        "startX": int(data[9]),
+        "startY": int(data[10]),
+        "fontBetweenSize": int(data[11]),
+        "titleBetweenSizeX": int(data[12]),
+        "titleBetweenSizeY": int(data[13]),
+        "PriceColor": str(data[14]),
+        "unitName": str(data[15])
+    }
 
 requests = {
-    "border": -1,
+    "border": 0,
     "cantsell": [],
     "discount": True,
     "discountStart": 0,
     "discountFinish": 70
 }
-
-
-def openMysql():
-    return mysql.connector.connect(host="127.0.0.1", user="root", password="", database="test")
 
 
 def datas(db=openMysql()):
@@ -164,35 +187,34 @@ def collectionOfNumbers():
 def listeArrangement():
     names = takeNames()
     numbers = collectionOfNumbers()
-    numbersTwo = numbers.copy()
     newNames = []
     newNumbers = []
-
     for x in range(len(names)):
         bigNumber = max(numbers)
-        name = names[numbersTwo.index(bigNumber)]
-        if name not in newNames:
-            newNumbers.append(bigNumber)
-            newNames.append(name)
-            numbers.remove(bigNumber)
+        name = names[numbers.index(bigNumber)]
+        newNames.append(str(name))
+        newNumbers.append(int(bigNumber))
+        numbers.remove(bigNumber)
+        names.remove(name)
+    print(newNames, newNumbers)
     return newNames, newNumbers
 
 
 def listeArrangementCategory(listOfNeed):
     names = algorithm(listOfNeed)
+    print(names)
     numbers = names[1]
     names = names[0]
-    numbersTwo = numbers.copy()
     newNames = []
     newNumbers = []
-
     for x in range(len(names)):
         bigNumber = max(numbers)
-        name = names[numbersTwo.index(bigNumber)]
-        if name not in newNames:
-            newNumbers.append(bigNumber)
-            newNames.append(name)
-            numbers.remove(bigNumber)
+        name = names[numbers.index(bigNumber)]
+        newNames.append(str(name))
+        newNumbers.append(int(bigNumber))
+        numbers.remove(bigNumber)
+        names.remove(name)
+    print(newNames, newNumbers)
     return newNames, newNumbers
 
 
@@ -238,7 +260,25 @@ def categoryName(db, y):
     return liste
 
 
-newLists = listeArrangement()
+def addEmptyArg():
+    db = openMysql()
+    newLists = listeArrangement()
+    categoryList = listeArrangementCategory(newLists)
+    print(newLists, categoryList)
+    for x in allFoodNameList(db):
+        if x not in newLists[0]:
+            newLists[0].append(str(x))
+            newLists[1].append(int(0))
+    for x in allCategorys(db):
+        if x not in categoryList[0]:
+            categoryList[0].append(str(x))
+            categoryList[1].append(int(0))
+    return newLists, categoryList
+
+
+a = addEmptyArg()
+newLists, categoryList = a[0], a[1]
+print(newLists, categoryList)
 
 
 class menuBackground(QWidget):
@@ -257,27 +297,15 @@ class menuBackground(QWidget):
     def texts(self):
         global extraCategoryList
         db = openMysql()
-        liste = []
-        newLists = listeArrangement()
-        categoryList = listeArrangementCategory(newLists)
         print(newLists, categoryList)
-        for x in allFoodNameList(db):
-            if x not in newLists[0]:
-                newLists[0].append(str(x))
-                newLists[1].append(int(0))
-        for x in allCategorys(db):
-            if x not in categoryList[0]:
-                categoryList[0].append(str(x))
-                categoryList[1].append(int(0))
-
         flag = 0
-        startX = 30
+        startX = backgroundOptions["startX"]
         startY = 250
         extraCategoryList = []
         for x in categoryList[0]:
             if flag == backgroundOptions["categoryBetween"]:
                 startY += backgroundOptions["titleBetweenSizeY"]
-                startX = 30
+                startX = backgroundOptions["startX"]
                 flag = 0
             if startY + backgroundOptions["titleBetweenSizeY"] > backgroundOptions["height"]:
                 extraCategoryList.append(str(x))
@@ -288,7 +316,7 @@ class menuBackground(QWidget):
                 label.setFont(QFont('Times', backgroundOptions["titleSize"]))
                 label.setStyleSheet("color:{};".format(backgroundOptions["titleColor"]))
                 label2 = QLabel("{}".format(backgroundOptions["unitName"]), self)
-                label2.setGeometry(startX + 80, startY + 15, 150, 25)
+                label2.setGeometry(startX + 80, startY + 12, 150, 25)
                 label2.setFont(QFont('Times', backgroundOptions["titleSize"]))
                 label2.setStyleSheet("color:{};".format(backgroundOptions["PriceColor"]))
                 foodY = startY + 10
@@ -316,7 +344,7 @@ class menuBackground(QWidget):
             secondPageButton.setGeometry(500, 750, 100, 50)
             secondPageButton.setStyleSheet("QPushButton"
                                            "{"
-                                           "background-color : white;"
+                                           "background-color : gray;"
                                            "}"
                                            "QPushButton::pressed"
                                            "{"
@@ -356,8 +384,8 @@ class secondPage(QWidget):
     def text(self):
         global extraCategoryList
         flag = 0
-        startX = 30
-        startY = 50
+        startX = backgroundOptions["startX"]
+        startY = backgroundOptions["startY"]
         db = openMysql()
         print(extraCategoryList)
         self.liste = []
@@ -373,11 +401,11 @@ class secondPage(QWidget):
             else:
                 label = QLabel(f"{x}", self)
                 label.setGeometry(startX, startY, 200, 50)
-                label.setFont(QFont('Times', backgroundOptions["titleSize"]))
+                label.setFont(QFont('{}'.format(backgroundOptions["fontType"]), backgroundOptions["titleSize"]))
                 label.setStyleSheet("color:{};".format(backgroundOptions["titleColor"]))
                 label2 = QLabel("{}".format(backgroundOptions["unitName"]), self)
-                label2.setGeometry(startX + 80, startY + 15, 150, 25)
-                label2.setFont(QFont('Times', backgroundOptions["titleSize"]))
+                label2.setGeometry(startX + 80, startY + 12, 150, 25)
+                label2.setFont(QFont('{}'.format(backgroundOptions["fontType"]), backgroundOptions["titleSize"]))
                 label2.setStyleSheet("color:{};".format(backgroundOptions["PriceColor"]))
                 foodY = startY + 10
                 for y in newLists[0]:
@@ -389,11 +417,11 @@ class secondPage(QWidget):
                         foodY += backgroundOptions["fontBetweenSize"]
                         label = QLabel(f"{y}", self)
                         label.setGeometry(startX, foodY, 150, 25)
-                        label.setFont(QFont('Times', backgroundOptions["fontSize"]))
+                        label.setFont(QFont('{}'.format(backgroundOptions["fontType"]), backgroundOptions["fontSize"]))
                         label.setStyleSheet("color:{};".format(backgroundOptions["fontColor"]))
                         label = QLabel(f"{price[0]}", self)
                         label.setGeometry(startX + 80, foodY, 40, 25)
-                        label.setFont(QFont('Times', backgroundOptions["fontSize"]))
+                        label.setFont(QFont('{}'.format(backgroundOptions["fontType"]), backgroundOptions["fontSize"]))
                         label.setStyleSheet("color:{};".format(backgroundOptions["fontColor"]))
                     else:
                         pass
@@ -405,7 +433,7 @@ class secondPage(QWidget):
             secondPageButton.setGeometry(500, 750, 100, 50)
             secondPageButton.setStyleSheet("QPushButton"
                                            "{"
-                                           "background-color : white;"
+                                           "background-color : gray;"
                                            "}"
                                            "QPushButton::pressed"
                                            "{"
@@ -427,8 +455,11 @@ class secondPage(QWidget):
         self.firstPagePart.show()
 
 
+
+
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    oMainwindow = menuBackground()
-    oMainwindow.show()
-    sys.exit(app.exec_())
+    if len(data) != 0:
+        app = QApplication(sys.argv)
+        oMainwindow = menuBackground()
+        oMainwindow.show()
+        sys.exit(app.exec_())
